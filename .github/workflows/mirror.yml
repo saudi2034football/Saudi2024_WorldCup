@@ -1,0 +1,21 @@
+name: Mirror to Personal Account
+
+on:
+  push:
+    branches:
+      - main   # change if your default branch is different
+
+jobs:
+  mirror:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout source repo
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Push to personal mirror
+        run: |
+          git remote add mirror https://saudi2034football:${{ secrets.MIRROR_TOKEN }}@github.com/saudi2034football/Saudi2024_WorldCup.git
+          git push mirror --mirror
