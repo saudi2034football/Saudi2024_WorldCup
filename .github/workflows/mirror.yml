@@ -3,7 +3,7 @@ name: Mirror to Personal Account
 on:
   push:
     branches:
-      - main   # change if your default branch is different
+      - main
 
 jobs:
   mirror:
@@ -15,7 +15,15 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Push to personal mirror
+      - name: Configure git
         run: |
-          git remote add mirror https://saudi2034football:${{ secrets.MIRROR_TOKEN }}@github.com/saudi2034football/Saudi2024_WorldCup.git
+          git config --global user.name "GitHub Action"
+          git config --global user.email "action@github.com"
+
+      - name: Push to personal mirror
+        env:
+          MIRROR_TOKEN: ${{ secrets.MIRROR_TOKEN }}
+        run: |
+          git remote remove mirror || true
+          git remote add mirror https://x-access-token:${MIRROR_TOKEN}@github.com/saudi2034football/Saudi2024_WorldCup.git
           git push mirror --mirror
