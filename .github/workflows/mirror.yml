@@ -1,4 +1,4 @@
-name: Mirror to Personal Account
+name: Mirror to Personal Account (SSH)
 
 on:
   push:
@@ -15,15 +15,15 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Configure git
+      - name: Setup SSH
         run: |
-          git config --global user.name "GitHub Action"
-          git config --global user.email "action@github.com"
+          mkdir -p ~/.ssh
+          echo "${{ secrets.MIRROR_SSH_KEY }}" > ~/.ssh/id_ed25519
+          chmod 600 ~/.ssh/id_ed25519
+          ssh-keyscan github.com >> ~/.ssh/known_hosts
 
       - name: Push to personal mirror
-        env:
-          MIRROR_TOKEN: ${{ secrets.MIRROR_TOKEN }}
         run: |
           git remote remove mirror || true
-          git remote add mirror https://x-access-token:${MIRROR_TOKEN}@github.com/saudi2034football/Saudi2024_WorldCup.git
+          git remote add mirror git@github.com:saudi2034football/Saudi2024_WorldCup.git
           git push mirror --mirror
